@@ -53,6 +53,8 @@ import UIKit
             circleView.color = newValue
         }
     }
+    
+    @objc @IBInspectable public dynamic var titleColor: UIColor?
 
     /// The color of action item circle view with highlighted state.
     /// Default is `nil`.
@@ -65,6 +67,15 @@ import UIKit
         }
         set {
             circleView.highlightedColor = newValue
+        }
+    }
+    
+    @objc @IBInspectable public dynamic var interactionDisabledButtonColor: UIColor? {
+        get {
+            return circleView.itemInteractionDisabledColor
+        }
+        set {
+            circleView.itemInteractionDisabledColor = newValue
         }
     }
 
@@ -97,6 +108,8 @@ import UIKit
             imageView.tintColor = newValue
         }
     }
+    
+    @objc @IBInspectable public dynamic var interactionDisabledTitleColor: UIColor?
 
     /// The title label of the item. Can be configured as needed.
     /// Read only.
@@ -106,7 +119,7 @@ import UIKit
         titleLabel.isUserInteractionEnabled = false
         titleLabel.numberOfLines = 1
         titleLabel.font = .systemFont(ofSize: UIFont.systemFontSize)
-        titleLabel.textColor = Styles.defaultItemTitleColor
+        titleLabel.textColor = self.isUserInteractionEnabled ? self.titleColor ?? Styles.defaultItemTitleColor : self.interactionDisabledTitleColor ?? Styles.defaultItemTitleColor
         return titleLabel
     }()
 
@@ -216,6 +229,17 @@ extension JJActionItem {
         }
         get {
             return super.isHighlighted
+        }
+    }
+    
+    open override var isUserInteractionEnabled: Bool {
+        set {
+            super.isUserInteractionEnabled = newValue
+            circleView.isItemInteractionEnabled = newValue
+            titleLabel.textColor = newValue ? self.titleColor ?? Styles.defaultItemTitleColor : self.interactionDisabledTitleColor ?? Styles.defaultItemTitleColor
+        }
+        get {
+            return super.isUserInteractionEnabled
         }
     }
 }

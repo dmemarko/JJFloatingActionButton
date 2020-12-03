@@ -313,7 +313,8 @@ import UIKit
                 let isFirstItem = (previousItem == nil)
                 let spacing = selectSpacing(forFirstItem: isFirstItem, defaultSpacing: interItemSpacing, firstItemSpacing: firstItemSpacing)
                 item.bottomAnchor.constraint(equalTo: previousView.topAnchor, constant: -spacing).isActive = true
-                item.circleView.centerXAnchor.constraint(equalTo: actionButton.centerXAnchor).isActive = true
+//                item.circleView.centerXAnchor.constraint(equalTo: actionButton.centerXAnchor).isActive = true
+                item.circleView.trailingAnchor.constraint(equalTo: actionButton.trailingAnchor).isActive = true
                 previousItem = item
             }
         }

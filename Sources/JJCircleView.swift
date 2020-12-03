@@ -43,11 +43,23 @@ import UIKit
             setNeedsDisplay()
         }
     }
+    
+    @objc @IBInspectable public dynamic var itemInteractionDisabledColor: UIColor? {
+        didSet {
+            setNeedsDisplay()
+        }
+    }
 
     /// A Boolean value indicating whether the circle view draws a highlight.
     /// Default is `false`.
     ///
     @objc public var isHighlighted = false {
+        didSet {
+            setNeedsDisplay()
+        }
+    }
+    
+    @objc public var isItemInteractionEnabled = true {
         didSet {
             setNeedsDisplay()
         }
@@ -97,7 +109,7 @@ fileprivate extension JJCircleView {
         circleRect.origin.x = (rect.width - diameter) / 2
         circleRect.origin.y = (rect.height - diameter) / 2
 
-        let circlePath = UIBezierPath(ovalIn: circleRect)
+        let circlePath = UIBezierPath(roundedRect: bounds, cornerRadius: rect.height / 2)
         currentColor.setFill()
         circlePath.fill()
 
@@ -105,6 +117,10 @@ fileprivate extension JJCircleView {
     }
 
     var currentColor: UIColor {
+        if !isItemInteractionEnabled, let disabled = itemInteractionDisabledColor {
+            return disabled
+        }
+        
         if !isHighlighted {
             return color
         }

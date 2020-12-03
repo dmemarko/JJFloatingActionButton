@@ -221,6 +221,15 @@ import UIKit
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
+    
+    @objc public fileprivate(set) lazy var titleLabel: UILabel = {
+        let titleLabel = UILabel()
+        titleLabel.isUserInteractionEnabled = false
+        titleLabel.numberOfLines = 1
+        titleLabel.font = .systemFont(ofSize: UIFont.systemFontSize)
+        titleLabel.textColor = Styles.defaultItemTitleColor
+        return titleLabel
+    }()
 
     /// The overlay view.
     /// Default background color is `UIColor(white: 0, alpha: 0.5)`.
@@ -380,11 +389,11 @@ import UIKit
     }
 
     /// All items that will be shown when floating action button is opened.
-    /// This excludes hidden items and items that have user interaction disabled.
+    /// This excludes hidden items
     ///
     var enabledItems: [JJActionItem] {
         return items.filter { item -> Bool in
-            !item.isHidden && item.isUserInteractionEnabled
+            !item.isHidden// && item.isUserInteractionEnabled
         }
     }
 }
@@ -411,7 +420,11 @@ extension JJFloatingActionButton {
     /// The natural size for the floating action button.
     ///
     open override var intrinsicContentSize: CGSize {
-        return CGSize(width: buttonDiameter, height: buttonDiameter)
+        let width = circleView
+            .systemLayoutSizeFitting(UIScreen.main.bounds.size, withHorizontalFittingPriority: .fittingSizeLevel,
+                                     verticalFittingPriority: .fittingSizeLevel)
+            .width
+        return CGSize(width: width, height: buttonDiameter)
     }
 
     /// Updates constraints for the view.
@@ -448,9 +461,11 @@ fileprivate extension JJFloatingActionButton {
 
         addSubview(circleView)
         circleView.addSubview(imageView)
+        circleView.addSubview(titleLabel)
 
         circleView.translatesAutoresizingMaskIntoConstraints = false
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
 
         createStaticConstraints()
         createDynamicConstraints()
@@ -461,7 +476,7 @@ fileprivate extension JJFloatingActionButton {
     func createStaticConstraints() {
         circleView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
         circleView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        circleView.widthAnchor.constraint(equalTo: circleView.heightAnchor).isActive = true
+//        circleView.widthAnchor.constraint(equalTo: circleView.heightAnchor).isActive = true
         circleView.widthAnchor.constraint(lessThanOrEqualTo: widthAnchor).isActive = true
         circleView.heightAnchor.constraint(lessThanOrEqualTo: heightAnchor).isActive = true
         let widthConstraint = circleView.widthAnchor.constraint(equalTo: widthAnchor)
@@ -472,11 +487,22 @@ fileprivate extension JJFloatingActionButton {
         heightConstraint.isActive = true
 
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.centerXAnchor.constraint(equalTo: circleView.centerXAnchor).isActive = true
+        imageView.leadingAnchor.constraint(equalTo: circleView.leadingAnchor, constant: 18).isActive = true
+//        imageView.trailingAnchor.constraint(equalTo: titleLabel.leadingAnchor, constant: 10).isActive = true
         imageView.centerYAnchor.constraint(equalTo: circleView.centerYAnchor).isActive = true
-
+        
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+//        titleLabel.centerXAnchor.constraint(equalTo: circleView.centerXAnchor).isActive = true
+        titleLabel.leadingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: 10).isActive = true
+        titleLabel.trailingAnchor.constraint(equalTo: circleView.trailingAnchor, constant: -18).isActive = true
+        titleLabel.centerYAnchor.constraint(equalTo: circleView.centerYAnchor).isActive = true
+        
         imageView.setContentCompressionResistancePriority(.fittingSizeLevel, for: .horizontal)
         imageView.setContentCompressionResistancePriority(.fittingSizeLevel, for: .vertical)
+        titleLabel.setContentHuggingPriority(.fittingSizeLevel, for: .horizontal)
+        titleLabel.setContentHuggingPriority(.fittingSizeLevel, for: .vertical)
+        titleLabel.setContentCompressionResistancePriority(UILayoutPriority(900), for: .horizontal)
+        titleLabel.setContentCompressionResistancePriority(UILayoutPriority(900), for: .vertical)
         circleView.setContentHuggingPriority(.fittingSizeLevel, for: .horizontal)
         circleView.setContentHuggingPriority(.fittingSizeLevel, for: .vertical)
     }

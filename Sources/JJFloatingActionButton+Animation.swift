@@ -25,6 +25,24 @@
 import UIKit
 
 @objc public extension JJFloatingActionButton {
+    
+    func setTitle(_ title: String, animated: Bool = true, completion: ((Bool) -> Void)? = nil) {
+        self.titleLabel.text = title
+        
+        guard let superview = superview, animated else {
+            return
+        }
+        
+        let animation: () -> Void = {
+            self.invalidateIntrinsicContentSize()
+            superview.setNeedsLayout()
+            self.circleView.setNeedsDisplay()
+            superview.layoutIfNeeded()
+        }
+
+        UIView.animate(withDuration: 0.15, animations: animation, completion: completion)
+    }
+    
     /// Open the floating action button and show all action items.
     ///
     /// - Parameter animated: When true, button will be opened with an animation. Default is `true`.
@@ -58,6 +76,8 @@ import UIKit
                    animated: animated,
                    group: animationGroup)
         openItems(animated: animated, group: animationGroup)
+        
+        self.invalidateIntrinsicContentSize()
 
         let groupCompletion: () -> Void = {
             guard self.buttonState == .opening else {
@@ -97,6 +117,8 @@ import UIKit
                     animated: animated,
                     group: animationGroup)
         closeItems(animated: animated, group: animationGroup)
+        
+        self.invalidateIntrinsicContentSize()
 
         let groupCompletion: () -> Void = {
             self.openItems.forEach { item in
@@ -228,7 +250,7 @@ fileprivate extension JJFloatingActionButton {
                       group: DispatchGroup,
                       animated: Bool) {
         let animation: () -> Void = {
-            self.circleView.transform = CGAffineTransform(rotationAngle: angle)
+            self.imageView.transform = CGAffineTransform(rotationAngle: angle)
         }
 
         UIView.animate(duration: settings.duration,
